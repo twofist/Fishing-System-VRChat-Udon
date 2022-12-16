@@ -126,6 +126,7 @@ MonoBehaviour:
   targetPosition: {x: 0, y: 0, z: 0}
   moveToTarget: 0
   moveSpeed: 1
+  bitFishIndex: 0
 --- !u!114 &2219054945429995981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: -1783056023, guid: 661092b4961be7145bfbe56e1e62337b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AllowCollisionOwnershipTransfer: 0
+  AllowCollisionOwnershipTransfer: 1
 --- !u!54 &3940336011461133158
 Rigidbody:
   m_ObjectHideFlags: 0

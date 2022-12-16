@@ -4,6 +4,7 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 using UnityEngine.UI;
+using VRC.SDK3.Components;
 
 public class FishingRodManager : UdonSharpBehaviour
 {
@@ -31,6 +32,7 @@ public class FishingRodManager : UdonSharpBehaviour
     public AudioClip caughtFishSound;
     public AudioClip reelWindSound;
     public AudioSource audioSource;
+    public VRCObjectPool objectPool;
     void Start()
     {
         reelBar.sizeDelta = new Vector2(reelBarSize, reelBar.sizeDelta.y);
@@ -57,13 +59,18 @@ public class FishingRodManager : UdonSharpBehaviour
     }
     public override void OnDrop()
     {
+        if (!currentPlayer.IsUserInVR())
+        {
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "HandleDesktopCast");
+        }
         base.OnDrop();
-        currentPlayer = null;
+        // currentPlayer = null;
     }
 
     public override void InputUse(bool value, VRC.Udon.Common.UdonInputEventArgs args)
     {
         if (currentPlayer != Networking.LocalPlayer) return;
+        if (!currentPlayer.IsUserInVR()) return;
         base.InputUse(value, args);
         if (value)
         {
@@ -75,9 +82,38 @@ public class FishingRodManager : UdonSharpBehaviour
         }
     }
 
+    public void HandleDesktopCast()
+    {
+        objectPool.Return(fly);
+        fly = null;
+        // Destroy(fly);
+        lineRenderer.enabled = false;
+        lineRenderer.SetPosition(1, Vector3.zero);
+        reelPickUp.pickupable = false;
+
+        fly = objectPool.TryToSpawn();
+        fly.transform.position = flySpawner.position;
+        fly.transform.rotation = flySpawner.rotation;
+        fly.transform.SetParent(null);
+        //fly = Instantiate(flyPrefab, flySpawner.position, flySpawner.rotation);
+        flyManager = fly.GetComponent<FlyManager>();
+        flyManager.fishingRodManager = this;
+        Rigidbody rb = fly.GetComponent<Rigidbody>();
+        flyManager.SetNetworkOwner(currentPlayer);
+
+        Vector3 positionDistance = flySpawner.position - transform.position;
+        Vector3 velocity = positionDistance * playerCastStrength;
+        rb.velocity = velocity;
+        reelPickUp.pickupable = true;
+        lineRenderer.enabled = true;
+        startReelWindSound();
+    }
+
     public void OnStartCast()
     {
-        Destroy(fly);
+        // Destroy(fly);
+        objectPool.Return(fly);
+        fly = null;
         lineRenderer.enabled = false;
         lineRenderer.SetPosition(1, Vector3.zero);
         reelPickUp.pickupable = false;
@@ -88,7 +124,11 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public void OnEndCast()
     {
-        fly = Instantiate(flyPrefab, flySpawner.position, flySpawner.rotation);
+        // fly = Instantiate(flyPrefab, flySpawner.position, flySpawner.rotation);
+        fly = objectPool.TryToSpawn();
+        fly.transform.position = flySpawner.position;
+        fly.transform.rotation = flySpawner.rotation;
+        fly.transform.SetParent(null);
         flyManager = fly.GetComponent<FlyManager>();
         flyManager.fishingRodManager = this;
         Rigidbody rb = fly.GetComponent<Rigidbody>();
@@ -119,8 +159,12 @@ public class FishingRodManager : UdonSharpBehaviour
     {
         reelManager.ResetReel();
         canvas.SetActive(false);
-        Destroy(fishManager.gameObject);
-        Destroy(fly);
+        fishManager.OnKillFish();
+        fishManager = null;
+        objectPool.Return(fly);
+        fly = null;
+        //Destroy(fishManager.gameObject);
+        //Destroy(fly);
         lineRenderer.SetPosition(1, lineRenderer.GetPosition(0));
         lineRenderer.enabled = false;
         audioSource.Stop();
@@ -132,7 +176,9 @@ public class FishingRodManager : UdonSharpBehaviour
         canvas.SetActive(false);
         fishManager.OnCaught();
         fishManager.SetNetworkOwner(currentPlayer);
-        Destroy(fly);
+        objectPool.Return(fly);
+        fly = null;
+        //Destroy(fly);
         fishManager.transform.position = flySpawner.position;
         lineRenderer.SetPosition(1, lineRenderer.GetPosition(0));
         lineRenderer.enabled = false;

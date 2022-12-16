@@ -3,6 +3,7 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
+using VRC.SDK3.Components;
 
 public class FlyManager : UdonSharpBehaviour
 {
@@ -20,6 +21,7 @@ public class FlyManager : UdonSharpBehaviour
     [HideInInspector] public bool moveToTarget;
     public float moveSpeed = 1;
     [HideInInspector][UdonSynced] public int bitFishIndex;
+    VRCObjectPool[] objectPools;
     void Start()
     {
 
@@ -31,6 +33,7 @@ public class FlyManager : UdonSharpBehaviour
         {
             if (timerCounter >= timer)
             {
+                Debug.Log("timer ended");
                 timerCounter = 0;
                 isTimerOn = false;
                 CheckForFishBite();
@@ -64,6 +67,7 @@ public class FlyManager : UdonSharpBehaviour
             isTimerOn = true;
             catchableFish = waterManager.catchableFish;
             catchChances = waterManager.catchChances;
+            objectPools = waterManager.objectPools;
         }
     }
 
@@ -81,10 +85,14 @@ public class FlyManager : UdonSharpBehaviour
 
     void HandleFishBite()
     {
+        Debug.Log("bite! " + catchableFish.Length + " - " + catchableFish + " - " + catchChances.Length);
+        Debug.Log(Networking.GetOwner(gameObject).playerId);
+        Debug.Log(Networking.LocalPlayer.playerId);
         if (catchChances.Length < 1)
         {
             int bitFish = Random.Range(0, catchableFish.Length - 1);
             bitFishIndex = bitFish;
+            Debug.Log("create fish");
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateFish");
         }
         else
@@ -94,6 +102,7 @@ public class FlyManager : UdonSharpBehaviour
                 if (Random.Range(0, 100) < catchChances[i])
                 {
                     bitFishIndex = i;
+                    Debug.Log("create fish");
                     SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateFish");
                     break;
                 }
@@ -112,9 +121,14 @@ public class FlyManager : UdonSharpBehaviour
 
     public void CreateFish()
     {
-        fish = Instantiate(catchableFish[bitFishIndex], transform.position, transform.rotation);
+        Debug.Log("spawn fish");
+        //fish = Instantiate(catchableFish[bitFishIndex], transform.position, transform.rotation);
+        fish = objectPools[bitFishIndex].TryToSpawn();
+        fish.transform.position = transform.position;
+        fish.transform.rotation = transform.rotation;
         fish.transform.SetParent(transform);
         FishManager fishManager = fish.GetComponent<FishManager>();
+        fishManager.objectPool = objectPools[bitFishIndex];
         fishingRodManager.fishManager = fishManager;
     }
 
