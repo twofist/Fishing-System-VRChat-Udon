@@ -19,4 +19,9 @@ public class FishManager : UdonSharpBehaviour
         transform.SetParent(null);
         pickup.pickupable = true;
     }
+
+    public void SetNetworkOwner(VRCPlayerApi player)
+    {
+        Networking.SetOwner(player, gameObject);
+    }
 }
