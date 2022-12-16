@@ -33,7 +33,6 @@ public class FlyManager : UdonSharpBehaviour
         {
             if (timerCounter >= timer)
             {
-                Debug.Log("timer ended");
                 timerCounter = 0;
                 isTimerOn = false;
                 CheckForFishBite();
@@ -88,14 +87,11 @@ public class FlyManager : UdonSharpBehaviour
 
     void HandleFishBite()
     {
-        Debug.Log("bite! " + catchableFish.Length + " - " + catchableFish + " - " + catchChances.Length);
-        Debug.Log(Networking.GetOwner(gameObject).playerId);
-        Debug.Log(Networking.LocalPlayer.playerId);
         if (catchChances.Length < 1)
         {
             int bitFish = Random.Range(0, catchableFish.Length - 1);
             bitFishIndex = bitFish;
-            Debug.Log("create fish");
+
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "CreateFish");
         }
         else
@@ -105,7 +101,7 @@ public class FlyManager : UdonSharpBehaviour
                 if (Random.Range(0, 100) < catchChances[i])
                 {
                     bitFishIndex = i;
-                    Debug.Log("create fish");
+
                     SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "CreateFish");
                     break;
                 }
@@ -124,9 +120,9 @@ public class FlyManager : UdonSharpBehaviour
 
     public void CreateFish()
     {
-        Networking.SetOwner(Networking.GetOwner(gameObject), objectPools[bitFishIndex].gameObject);
-        Debug.Log("spawn fish");
-        //fish = Instantiate(catchableFish[bitFishIndex], transform.position, transform.rotation);
+        if (fishingRodManager.currentPlayer != Networking.LocalPlayer) return;
+        Networking.SetOwner(fishingRodManager.currentPlayer, objectPools[bitFishIndex].gameObject);
+
         fish = objectPools[bitFishIndex].TryToSpawn();
         if (fish != null)
         {

@@ -33,6 +33,7 @@ public class FishingRodManager : UdonSharpBehaviour
     public AudioClip reelWindSound;
     public AudioSource audioSource;
     public VRCObjectPool objectPool;
+    [UdonSynced] public Vector3 linePosition;
     void Start()
     {
         reelBar.sizeDelta = new Vector2(reelBarSize, reelBar.sizeDelta.y);
@@ -47,8 +48,9 @@ public class FishingRodManager : UdonSharpBehaviour
         }
         if (fly != null)
         {
-            lineRenderer.SetPosition(1, lineRenderer.transform.InverseTransformPoint(fly.transform.TransformPoint(fly.transform.position)));
+            linePosition = lineRenderer.transform.InverseTransformPoint(fly.transform.position);
         }
+        lineRenderer.SetPosition(1, linePosition);
     }
 
     public override void OnPickup()
@@ -65,7 +67,6 @@ public class FishingRodManager : UdonSharpBehaviour
             SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "HandleDesktopCast");
         }
         base.OnDrop();
-        // currentPlayer = null;
     }
 
     public override void InputUse(bool value, VRC.Udon.Common.UdonInputEventArgs args)
@@ -91,9 +92,9 @@ public class FishingRodManager : UdonSharpBehaviour
         }
         objectPool.Return(fly);
         fly = null;
-        // Destroy(fly);
+
         lineRenderer.enabled = false;
-        lineRenderer.SetPosition(1, Vector3.zero);
+        linePosition = Vector3.zero;
         reelPickUp.pickupable = false;
 
         fly = objectPool.TryToSpawn();
@@ -102,7 +103,7 @@ public class FishingRodManager : UdonSharpBehaviour
             fly.transform.position = flySpawner.position;
             fly.transform.rotation = flySpawner.rotation;
             fly.transform.SetParent(null);
-            //fly = Instantiate(flyPrefab, flySpawner.position, flySpawner.rotation);
+
             flyManager = fly.GetComponent<FlyManager>();
             flyManager.fishingRodManager = this;
             Rigidbody rb = fly.GetComponent<Rigidbody>();
@@ -123,7 +124,6 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public void OnStartCast()
     {
-        // Destroy(fly);
         if (fishManager != null)
         {
             OnFishLost();
@@ -131,7 +131,7 @@ public class FishingRodManager : UdonSharpBehaviour
         objectPool.Return(fly);
         fly = null;
         lineRenderer.enabled = false;
-        lineRenderer.SetPosition(1, Vector3.zero);
+        linePosition = Vector3.zero;
         reelPickUp.pickupable = false;
         startCastPosition = flySpawner.position;
         startCastTime = Time.time;
@@ -140,7 +140,6 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public void OnEndCast()
     {
-        // fly = Instantiate(flyPrefab, flySpawner.position, flySpawner.rotation);
         fly = objectPool.TryToSpawn();
         fly.transform.position = flySpawner.position;
         fly.transform.rotation = flySpawner.rotation;
@@ -182,9 +181,8 @@ public class FishingRodManager : UdonSharpBehaviour
         fishManager = null;
         objectPool.Return(fly);
         fly = null;
-        //Destroy(fishManager.gameObject);
-        //Destroy(fly);
-        lineRenderer.SetPosition(1, lineRenderer.GetPosition(0));
+
+        linePosition = Vector3.zero;
         lineRenderer.enabled = false;
         audioSource.Stop();
     }
@@ -200,10 +198,10 @@ public class FishingRodManager : UdonSharpBehaviour
         }
         objectPool.Return(fly);
         fly = null;
-        //Destroy(fly);
+
         fishManager.transform.position = flySpawner.position;
         fishManager = null;
-        lineRenderer.SetPosition(1, lineRenderer.GetPosition(0));
+        linePosition = Vector3.zero;
         lineRenderer.enabled = false;
         audioSource.Stop();
     }
