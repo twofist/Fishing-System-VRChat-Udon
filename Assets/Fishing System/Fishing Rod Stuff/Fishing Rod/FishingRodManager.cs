@@ -11,7 +11,8 @@ public class FishingRodManager : UdonSharpBehaviour
     public RectTransform reelBar;
     public Slider slider;
     float sliderSpeed = 0.1f;
-    public GameObject fly;
+    public GameObject flyPrefab;
+    GameObject fly;
     public Transform flySpawner;
     public Rigidbody rodRigidBody;
     public LineRenderer lineRenderer;
@@ -20,6 +21,8 @@ public class FishingRodManager : UdonSharpBehaviour
     [HideInInspector] public int rotationsNeeded = 5;
     FlyManager flyManager;
     [HideInInspector] public FishManager fishManager;
+    VRCPlayerApi currentPlayer;
+    public ReelManager reelManager;
     void Start()
     {
         reelBar.sizeDelta = new Vector2(reelBarSize, reelBar.sizeDelta.y);
@@ -34,23 +37,38 @@ public class FishingRodManager : UdonSharpBehaviour
         }
         if (fly != null)
         {
-            lineRenderer.SetPosition(1, transform.InverseTransformPoint(fly.transform.position));
+            lineRenderer.SetPosition(1, lineRenderer.transform.InverseTransformPoint(fly.transform.TransformPoint(fly.transform.position)));
         }
     }
 
-    public override void OnPickupUseDown()
+    public override void OnPickup()
     {
-        base.OnPickupUseDown();
-        if (fly)
+        base.OnPickup();
+        currentPlayer = Networking.LocalPlayer;
+    }
+    public override void OnDrop()
+    {
+        base.OnDrop();
+        currentPlayer = null;
+    }
+
+    public override void InputUse(bool value, VRC.Udon.Common.UdonInputEventArgs args)
+    {
+        if (!value) return;
+        if (currentPlayer != Networking.LocalPlayer) return;
+        Networking.SetOwner(currentPlayer, gameObject);
+        base.InputUse(value, args);
+        if (fly != null)
         {
             Destroy(fly);
             lineRenderer.enabled = false;
             lineRenderer.SetPosition(1, Vector3.zero);
             reelPickUp.pickupable = false;
+
         }
         else
         {
-            fly = Instantiate(fly, flySpawner.position, flySpawner.rotation);
+            fly = Instantiate(flyPrefab, flySpawner.position, flySpawner.rotation);
             flyManager = fly.GetComponent<FlyManager>();
             flyManager.fishingRodManager = this;
             Rigidbody rb = fly.GetComponent<Rigidbody>();
@@ -65,19 +83,23 @@ public class FishingRodManager : UdonSharpBehaviour
     {
         canvas.SetActive(true);
         sliderSpeed = speed;
+        reelManager.canPullIn = true;
     }
 
     public void OnFishLost()
     {
+        Debug.Log("lost fish");
+        reelManager.ResetReel();
         canvas.SetActive(false);
         Destroy(fishManager.gameObject);
         Destroy(fly);
-        lineRenderer.SetPosition(1, Vector3.zero);
-        reelPickUp.pickupable = false;
+        lineRenderer.SetPosition(1, lineRenderer.GetPosition(0));
     }
 
     public void OnCatch()
     {
+        Debug.Log("caught fish");
+        reelManager.ResetReel();
         canvas.SetActive(false);
         fishManager.OnCaught();
         Destroy(fly);

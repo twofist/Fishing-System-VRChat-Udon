@@ -6,7 +6,7 @@ using VRC.Udon;
 
 public class FlyManager : UdonSharpBehaviour
 {
-    Rigidbody rb;
+    public Rigidbody rb;
 
     float timerCounter = 0;
     float timer = 5f;
@@ -30,13 +30,15 @@ public class FlyManager : UdonSharpBehaviour
         {
             if (timerCounter >= timer)
             {
-                CheckForFishBite();
                 timerCounter = 0;
                 isTimerOn = false;
+                CheckForFishBite();
+                Debug.Log("counter finished");
             }
             else
             {
                 timerCounter += Time.deltaTime;
+                Debug.Log("counting");
             }
         }
         if (moveToTarget)
@@ -62,12 +64,14 @@ public class FlyManager : UdonSharpBehaviour
             isTimerOn = true;
             catchableFish = waterManager.catchableFish;
             catchChances = waterManager.catchChances;
+            Debug.Log("waiting for fish");
         }
     }
 
     void CheckForFishBite()
     {
-        if (Random.Range(0, 100) < 10)
+        Debug.Log("checking for fish");
+        if (Random.Range(0, 100) < 50)
         {
             HandleFishBite();
         }
@@ -79,10 +83,12 @@ public class FlyManager : UdonSharpBehaviour
 
     void HandleFishBite()
     {
+        Debug.Log("fish bit");
         if (catchChances.Length < 1)
         {
             int bitFish = Random.Range(0, catchableFish.Length - 1);
-            fish = Instantiate(catchableFish[bitFish], transform);
+            fish = Instantiate(catchableFish[bitFish], transform.position, transform.rotation);
+            fish.transform.SetParent(transform);
             FishManager fishManager = fish.GetComponent<FishManager>();
             fishingRodManager.fishManager = fishManager;
         }
@@ -92,7 +98,8 @@ public class FlyManager : UdonSharpBehaviour
             {
                 if (Random.Range(0, 100) < catchChances[i])
                 {
-                    fish = Instantiate(catchableFish[i], transform);
+                    fish = Instantiate(catchableFish[i], transform.position, transform.rotation);
+                    fish.transform.SetParent(transform);
                     FishManager fishManager = fish.GetComponent<FishManager>();
                     fishingRodManager.fishManager = fishManager;
                     break;
@@ -103,6 +110,10 @@ public class FlyManager : UdonSharpBehaviour
         {
             FishManager fishManager = fish.GetComponent<FishManager>();
             fishingRodManager.OnFishBite(fishManager.sliderSpeed);
+        }
+        else
+        {
+            isTimerOn = true;
         }
     }
 }
