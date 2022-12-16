@@ -26,6 +26,7 @@ public class FishingRodManager : UdonSharpBehaviour
     float startCastTime;
     Vector3 startCastPosition;
     Vector3 startCastRotation;
+    public float playerCastStrength = 10;
     void Start()
     {
         reelBar.sizeDelta = new Vector2(reelBarSize, reelBar.sizeDelta.y);
@@ -76,9 +77,9 @@ public class FishingRodManager : UdonSharpBehaviour
         lineRenderer.enabled = false;
         lineRenderer.SetPosition(1, Vector3.zero);
         reelPickUp.pickupable = false;
-        startCastPosition = transform.position;
+        startCastPosition = flySpawner.position;
         startCastTime = Time.time;
-        startCastRotation = transform.rotation.eulerAngles;
+        startCastRotation = flySpawner.rotation.eulerAngles;
     }
 
     void OnEndCast()
@@ -88,14 +89,9 @@ public class FishingRodManager : UdonSharpBehaviour
         flyManager.fishingRodManager = this;
         Rigidbody rb = fly.GetComponent<Rigidbody>();
 
-        Vector3 positiondiff = startCastPosition - transform.position;
-        float seconds = Time.time - startCastTime;
-        //Vector3 rotationDiff = transform.rotation.eulerAngles - startCastRotation;
-        Vector3 direction = positiondiff.normalized;
-        Vector3 vel = (positiondiff); /// seconds;
-        fly.transform.LookAt(fly.transform.position + -direction);
-        rb.velocity = vel;//rodRigidBody.velocity;
-        //rb.angularVelocity = rodRigidBody.angularVelocity;
+        Vector3 positionDistance = flySpawner.position - startCastPosition;
+        Vector3 velocity = positionDistance * playerCastStrength;
+        rb.velocity = velocity;
         reelPickUp.pickupable = true;
         lineRenderer.enabled = true;
     }
