@@ -54,12 +54,7 @@ public class ReelManager : UdonSharpBehaviour
 
     void OnRotationsChanged()
     {
-        Debug.Log("rotations changed");
         float offset = (fishingRodManager.reelBar.sizeDelta.x - fishingRodManager.reelBarSize) / 2;
-        Debug.Log("offset - " + offset);
-        Debug.Log(fishingRodManager.slider.value);
-        Debug.Log(fishingRodManager.slider.value < offset);
-        Debug.Log(fishingRodManager.slider.value > fishingRodManager.reelBar.sizeDelta.x - offset);
         if (fishingRodManager.slider.value < offset || fishingRodManager.slider.value > fishingRodManager.reelBar.sizeDelta.x - offset)
         {
             fishingRodManager.OnFishLost();
@@ -76,7 +71,6 @@ public class ReelManager : UdonSharpBehaviour
 
     public void ResetReel()
     {
-        Debug.Log("reset reel");
         currentRotations = 0;
         previousRotations = 0;
         angleCounter = 0;

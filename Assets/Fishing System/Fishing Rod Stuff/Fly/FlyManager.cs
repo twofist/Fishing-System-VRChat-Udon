@@ -33,12 +33,10 @@ public class FlyManager : UdonSharpBehaviour
                 timerCounter = 0;
                 isTimerOn = false;
                 CheckForFishBite();
-                Debug.Log("counter finished");
             }
             else
             {
                 timerCounter += Time.deltaTime;
-                Debug.Log("counting");
             }
         }
         if (moveToTarget)
@@ -64,13 +62,11 @@ public class FlyManager : UdonSharpBehaviour
             isTimerOn = true;
             catchableFish = waterManager.catchableFish;
             catchChances = waterManager.catchChances;
-            Debug.Log("waiting for fish");
         }
     }
 
     void CheckForFishBite()
     {
-        Debug.Log("checking for fish");
         if (Random.Range(0, 100) < 50)
         {
             HandleFishBite();
@@ -83,7 +79,6 @@ public class FlyManager : UdonSharpBehaviour
 
     void HandleFishBite()
     {
-        Debug.Log("fish bit");
         if (catchChances.Length < 1)
         {
             int bitFish = Random.Range(0, catchableFish.Length - 1);

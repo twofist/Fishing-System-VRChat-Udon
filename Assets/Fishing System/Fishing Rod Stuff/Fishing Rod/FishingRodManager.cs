@@ -105,7 +105,6 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public void OnFishLost()
     {
-        Debug.Log("lost fish");
         reelManager.ResetReel();
         canvas.SetActive(false);
         Destroy(fishManager.gameObject);
@@ -116,7 +115,6 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public void OnCatch()
     {
-        Debug.Log("caught fish");
         reelManager.ResetReel();
         canvas.SetActive(false);
         fishManager.OnCaught();
