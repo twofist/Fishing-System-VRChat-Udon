@@ -23,6 +23,9 @@ public class FishingRodManager : UdonSharpBehaviour
     [HideInInspector] public FishManager fishManager;
     [HideInInspector] public VRCPlayerApi currentPlayer;
     public ReelManager reelManager;
+    float startCastTime;
+    Vector3 startCastPosition;
+    Vector3 startCastRotation;
     void Start()
     {
         reelBar.sizeDelta = new Vector2(reelBarSize, reelBar.sizeDelta.y);
@@ -54,29 +57,47 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public override void InputUse(bool value, VRC.Udon.Common.UdonInputEventArgs args)
     {
-        if (!value) return;
         if (currentPlayer != Networking.LocalPlayer) return;
         Networking.SetOwner(currentPlayer, gameObject);
         base.InputUse(value, args);
-        if (fly != null)
+        if (value)
         {
-            Destroy(fly);
-            lineRenderer.enabled = false;
-            lineRenderer.SetPosition(1, Vector3.zero);
-            reelPickUp.pickupable = false;
-
+            OnStartCast();
         }
         else
         {
-            fly = Instantiate(flyPrefab, flySpawner.position, flySpawner.rotation);
-            flyManager = fly.GetComponent<FlyManager>();
-            flyManager.fishingRodManager = this;
-            Rigidbody rb = fly.GetComponent<Rigidbody>();
-            rb.velocity = rodRigidBody.velocity;
-            rb.angularVelocity = rodRigidBody.angularVelocity;
-            reelPickUp.pickupable = true;
-            lineRenderer.enabled = true;
+            OnEndCast();
         }
+    }
+
+    void OnStartCast()
+    {
+        Destroy(fly);
+        lineRenderer.enabled = false;
+        lineRenderer.SetPosition(1, Vector3.zero);
+        reelPickUp.pickupable = false;
+        startCastPosition = transform.position;
+        startCastTime = Time.time;
+        startCastRotation = transform.rotation.eulerAngles;
+    }
+
+    void OnEndCast()
+    {
+        fly = Instantiate(flyPrefab, flySpawner.position, flySpawner.rotation);
+        flyManager = fly.GetComponent<FlyManager>();
+        flyManager.fishingRodManager = this;
+        Rigidbody rb = fly.GetComponent<Rigidbody>();
+
+        Vector3 positiondiff = startCastPosition - transform.position;
+        float seconds = Time.time - startCastTime;
+        //Vector3 rotationDiff = transform.rotation.eulerAngles - startCastRotation;
+        Vector3 direction = positiondiff.normalized;
+        Vector3 vel = (positiondiff); /// seconds;
+        fly.transform.LookAt(fly.transform.position + -direction);
+        rb.velocity = vel;//rodRigidBody.velocity;
+        //rb.angularVelocity = rodRigidBody.angularVelocity;
+        reelPickUp.pickupable = true;
+        lineRenderer.enabled = true;
     }
 
     public void OnFishBite(float speed)
@@ -118,7 +139,7 @@ public class FishingRodManager : UdonSharpBehaviour
         float distance = Vector3.Distance(from, to);
         Vector3 direction = (from - to).normalized;
         float moveDistance = distance / rotationsNeeded;
-        Vector3 target = from + direction * moveDistance;
+        Vector3 target = from + -direction * moveDistance;
 
         flyManager.targetPosition = target;
         flyManager.moveToTarget = true;
