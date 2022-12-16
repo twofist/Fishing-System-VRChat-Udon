@@ -60,7 +60,10 @@ public class FlyManager : UdonSharpBehaviour
     private void OnTriggerEnter(Collider other)
     {
         rb.isKinematic = true;
-        fishingRodManager.audioSource.Stop();
+        if (fishingRodManager != null)
+        {
+            fishingRodManager.audioSource.Stop();
+        }
         WaterManager waterManager = other.gameObject.GetComponent<WaterManager>();
         if (waterManager != null)
         {
@@ -93,7 +96,7 @@ public class FlyManager : UdonSharpBehaviour
             int bitFish = Random.Range(0, catchableFish.Length - 1);
             bitFishIndex = bitFish;
             Debug.Log("create fish");
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateFish");
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "CreateFish");
         }
         else
         {
@@ -103,7 +106,7 @@ public class FlyManager : UdonSharpBehaviour
                 {
                     bitFishIndex = i;
                     Debug.Log("create fish");
-                    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "CreateFish");
+                    SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "CreateFish");
                     break;
                 }
             }
@@ -121,15 +124,19 @@ public class FlyManager : UdonSharpBehaviour
 
     public void CreateFish()
     {
+        Networking.SetOwner(Networking.GetOwner(gameObject), objectPools[bitFishIndex].gameObject);
         Debug.Log("spawn fish");
         //fish = Instantiate(catchableFish[bitFishIndex], transform.position, transform.rotation);
         fish = objectPools[bitFishIndex].TryToSpawn();
-        fish.transform.position = transform.position;
-        fish.transform.rotation = transform.rotation;
-        fish.transform.SetParent(transform);
-        FishManager fishManager = fish.GetComponent<FishManager>();
-        fishManager.objectPool = objectPools[bitFishIndex];
-        fishingRodManager.fishManager = fishManager;
+        if (fish != null)
+        {
+            fish.transform.position = transform.position;
+            fish.transform.rotation = transform.rotation;
+            fish.transform.SetParent(transform);
+            FishManager fishManager = fish.GetComponent<FishManager>();
+            fishManager.objectPool = objectPools[bitFishIndex];
+            fishingRodManager.fishManager = fishManager;
+        }
     }
 
     public void SetNetworkOwner(VRCPlayerApi player)

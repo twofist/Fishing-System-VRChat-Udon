@@ -410,7 +410,6 @@ GameObject:
   - component: {fileID: 3455309971005095351}
   - component: {fileID: 3070256517326113195}
   - component: {fileID: 8557262564589501395}
-  - component: {fileID: 1630084949219033722}
   m_Layer: 13
   m_Name: Fishing Rod
   m_TagString: Untagged
@@ -550,7 +549,7 @@ MonoBehaviour:
   caughtFishSound: {fileID: 8300000, guid: ec56af8b93a91864da76bd2b90dc2c63, type: 3}
   reelWindSound: {fileID: 8300000, guid: dc4eba55554abfe45936f261d32b2952, type: 3}
   audioSource: {fileID: 3070256517326113195}
-  objectPool: {fileID: 1630084949219033722}
+  objectPool: {fileID: 1041235433510810814}
 --- !u!114 &3455309971005095351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -691,22 +690,6 @@ MonoBehaviour:
   VolumetricRadius: 0
   EnableSpatialization: 1
   UseAudioSourceVolumeCurve: 0
---- !u!114 &1630084949219033722
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4958431480385652655}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 454367647, guid: 661092b4961be7145bfbe56e1e62337b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Pool:
-  - {fileID: 6657152648596840715}
-  StartPositions: []
-  StartRotations: []
 --- !u!1 &4958431480589093659
 GameObject:
   m_ObjectHideFlags: 0
@@ -716,6 +699,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4958431480589093658}
+  - component: {fileID: 1041235433510810814}
   m_Layer: 0
   m_Name: Fly Spawner
   m_TagString: Untagged
@@ -739,6 +723,22 @@ Transform:
   m_Father: {fileID: 2748509104517636618}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1041235433510810814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4958431480589093659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 454367647, guid: 661092b4961be7145bfbe56e1e62337b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Pool:
+  - {fileID: 6657152648596840715}
+  StartPositions: []
+  StartRotations: []
 --- !u!1 &4958431481649506624
 GameObject:
   m_ObjectHideFlags: 0
