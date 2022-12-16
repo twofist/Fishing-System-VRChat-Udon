@@ -21,7 +21,7 @@ public class FishingRodManager : UdonSharpBehaviour
     [HideInInspector] public int rotationsNeeded = 5;
     FlyManager flyManager;
     [HideInInspector] public FishManager fishManager;
-    VRCPlayerApi currentPlayer;
+    [HideInInspector] public VRCPlayerApi currentPlayer;
     public ReelManager reelManager;
     void Start()
     {
@@ -94,6 +94,7 @@ public class FishingRodManager : UdonSharpBehaviour
         Destroy(fishManager.gameObject);
         Destroy(fly);
         lineRenderer.SetPosition(1, lineRenderer.GetPosition(0));
+        lineRenderer.enabled = false;
     }
 
     public void OnCatch()
@@ -103,13 +104,15 @@ public class FishingRodManager : UdonSharpBehaviour
         canvas.SetActive(false);
         fishManager.OnCaught();
         Destroy(fly);
-        fishManager.transform.position = flySpawner.TransformPoint(flySpawner.position);
+        fishManager.transform.position = flySpawner.position;
+        lineRenderer.SetPosition(1, lineRenderer.GetPosition(0));
+        lineRenderer.enabled = false;
     }
 
     public void MoveFlyToNextPoint()
     {
         Vector3 from = flyManager.transform.position;
-        Vector3 to = flySpawner.TransformPoint(flySpawner.position);
+        Vector3 to = flySpawner.position;
         to = new Vector3(to.x, 0, to.z);
         from = new Vector3(from.x, 0, from.z);
         float distance = Vector3.Distance(from, to);
