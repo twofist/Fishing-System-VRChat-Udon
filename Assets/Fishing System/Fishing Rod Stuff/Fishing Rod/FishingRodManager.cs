@@ -12,7 +12,6 @@ public class FishingRodManager : UdonSharpBehaviour
     public RectTransform reelBar;
     public Slider slider;
     float sliderSpeed = 0.1f;
-    public GameObject flyPrefab;
     GameObject fly;
     public Transform flySpawner;
     public Rigidbody rodRigidBody;
@@ -48,6 +47,7 @@ public class FishingRodManager : UdonSharpBehaviour
         }
         if (fly != null)
         {
+            lineRenderer.enabled = true;
             linePosition = lineRenderer.transform.InverseTransformPoint(fly.transform.position);
         }
         lineRenderer.SetPosition(1, linePosition);
@@ -56,9 +56,28 @@ public class FishingRodManager : UdonSharpBehaviour
     public override void OnPickup()
     {
         base.OnPickup();
-        currentPlayer = Networking.LocalPlayer;
-        Networking.SetOwner(currentPlayer, gameObject);
-        Networking.SetOwner(currentPlayer, flySpawner.gameObject);
+        if (currentPlayer != Networking.LocalPlayer)
+        {
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "ResetRod");
+            currentPlayer = Networking.LocalPlayer;
+            Networking.SetOwner(currentPlayer, gameObject);
+            Networking.SetOwner(currentPlayer, flySpawner.gameObject);
+        }
+    }
+
+    public void ResetRod()
+    {
+        flyManager = null;
+        if (fishManager)
+        {
+            OnFishLost();
+        }
+        fishManager = null;
+        canvas.SetActive(false);
+        linePosition = Vector3.zero;
+        lineRenderer.enabled = false;
+        audioSource.Stop();
+        audioSource.loop = false;
     }
     public override void OnDrop()
     {
@@ -177,7 +196,10 @@ public class FishingRodManager : UdonSharpBehaviour
     {
         reelManager.ResetReel();
         canvas.SetActive(false);
-        fishManager.OnKillFish();
+        if (fishManager != null)
+        {
+            fishManager.OnKillFish();
+        }
         fishManager = null;
         objectPool.Return(fly);
         fly = null;
@@ -193,14 +215,14 @@ public class FishingRodManager : UdonSharpBehaviour
         canvas.SetActive(false);
         if (fishManager != null)
         {
-            fishManager.OnCaught();
             fishManager.SetNetworkOwner(currentPlayer);
+            fishManager.OnCaught();
+            fishManager.transform.position = flySpawner.position;
         }
+        fishManager = null;
         objectPool.Return(fly);
         fly = null;
 
-        fishManager.transform.position = flySpawner.position;
-        fishManager = null;
         linePosition = Vector3.zero;
         lineRenderer.enabled = false;
         audioSource.Stop();
@@ -213,19 +235,22 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public void MoveFlyToNextPoint()
     {
-        Vector3 from = flyManager.transform.position;
-        Vector3 to = flySpawner.position;
-        to = new Vector3(to.x, 0, to.z);
-        from = new Vector3(from.x, 0, from.z);
-        float distance = Vector3.Distance(from, to);
-        Vector3 direction = (from - to).normalized;
-        float moveDistance = distance / rotationsNeeded;
-        Vector3 target = from + -direction * moveDistance;
+        if (flyManager != null && flySpawner != null)
+        {
+            Vector3 from = flyManager.transform.position;
+            Vector3 to = flySpawner.position;
+            to = new Vector3(to.x, 0, to.z);
+            from = new Vector3(from.x, 0, from.z);
+            float distance = Vector3.Distance(from, to);
+            Vector3 direction = (from - to).normalized;
+            float moveDistance = distance / rotationsNeeded;
+            Vector3 target = from + -direction * moveDistance;
 
-        flyManager.targetPosition = target;
-        flyManager.moveToTarget = true;
+            flyManager.targetPosition = target;
+            flyManager.moveToTarget = true;
 
-        startReelWindSound();
+            startReelWindSound();
+        }
     }
 
     void startReelWindSound()

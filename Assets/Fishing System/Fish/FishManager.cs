@@ -11,6 +11,7 @@ public class FishManager : UdonSharpBehaviour
     public VRC_Pickup pickup;
     [HideInInspector] public VRCObjectPool objectPool;
     [UdonSynced] public bool pickupable = false;
+    [UdonSynced] bool isKilled = false;
 
     void Start()
     {
@@ -21,21 +22,27 @@ public class FishManager : UdonSharpBehaviour
     {
         if (pickupable != pickup.pickupable)
         {
-            pickup.pickupable = pickupable;
+            transform.SetParent(null);
+            pickup.pickupable = true;
+        }
+        if (isKilled && transform.parent != null)
+        {
+            transform.SetParent(null);
+            if (Networking.IsOwner(Networking.LocalPlayer, gameObject))
+            {
+                objectPool.Return(gameObject);
+            }
         }
     }
 
     public void OnCaught()
     {
-        transform.SetParent(null);
-        pickup.pickupable = true;
         pickupable = true;
     }
 
     public void OnKillFish()
     {
-        transform.SetParent(null);
-        objectPool.Return(gameObject);
+        isKilled = true;
     }
 
     public void SetNetworkOwner(VRCPlayerApi player)

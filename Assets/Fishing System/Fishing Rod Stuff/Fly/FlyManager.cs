@@ -66,10 +66,14 @@ public class FlyManager : UdonSharpBehaviour
         WaterManager waterManager = other.gameObject.GetComponent<WaterManager>();
         if (waterManager != null)
         {
-            isTimerOn = true;
+
             catchableFish = waterManager.catchableFish;
             catchChances = waterManager.catchChances;
             objectPools = waterManager.objectPools;
+            if (fishingRodManager != null && fishingRodManager.currentPlayer == Networking.LocalPlayer)
+            {
+                isTimerOn = true;
+            }
         }
     }
 
@@ -126,9 +130,9 @@ public class FlyManager : UdonSharpBehaviour
         fish = objectPools[bitFishIndex].TryToSpawn();
         if (fish != null)
         {
+            fish.transform.SetParent(transform);
             fish.transform.position = transform.position;
             fish.transform.rotation = transform.rotation;
-            fish.transform.SetParent(transform);
             FishManager fishManager = fish.GetComponent<FishManager>();
             fishManager.objectPool = objectPools[bitFishIndex];
             fishingRodManager.fishManager = fishManager;
