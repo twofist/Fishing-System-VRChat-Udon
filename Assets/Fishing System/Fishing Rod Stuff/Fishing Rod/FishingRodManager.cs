@@ -68,6 +68,10 @@ public class FishingRodManager : UdonSharpBehaviour
     {
         reelManager.ResetReel();
         canvas.SetActive(false);
+        if (flyManager != null)
+        {
+            flyManager.moveToTarget = false;
+        }
         if (fishManager != null)
         {
             fishManager.OnKillFish();
