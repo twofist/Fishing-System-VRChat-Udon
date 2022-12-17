@@ -20,7 +20,7 @@ public class FishingRodManager : UdonSharpBehaviour
     [HideInInspector] public int rotationsNeeded = 5;
     FlyManager flyManager;
     [HideInInspector] public FishManager fishManager;
-    [HideInInspector] public VRCPlayerApi currentPlayer;
+    [HideInInspector][UdonSynced] public int currentPlayerID;
     public ReelManager reelManager;
     Vector3 startCastPosition;
     public float playerCastStrength = 10;
@@ -50,12 +50,12 @@ public class FishingRodManager : UdonSharpBehaviour
     public override void OnPickup()
     {
         base.OnPickup();
-        if (currentPlayer != Networking.LocalPlayer)
+        if (currentPlayerID != Networking.LocalPlayer.playerId)
         {
-            ResetRod();
-            currentPlayer = Networking.LocalPlayer;
-            Networking.SetOwner(currentPlayer, gameObject);
-            Networking.SetOwner(currentPlayer, flySpawner.gameObject);
+            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "ResetRod");
+            currentPlayerID = Networking.LocalPlayer.playerId;
+            Networking.SetOwner(Networking.LocalPlayer, gameObject);
+            Networking.SetOwner(Networking.LocalPlayer, flySpawner.gameObject);
         }
     }
 
@@ -87,7 +87,7 @@ public class FishingRodManager : UdonSharpBehaviour
     }
     public override void OnDrop()
     {
-        if (!currentPlayer.IsUserInVR())
+        if (!Networking.LocalPlayer.IsUserInVR())
         {
             HandleDesktopCast();
         }
@@ -96,9 +96,9 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public override void InputUse(bool value, VRC.Udon.Common.UdonInputEventArgs args)
     {
-        if (currentPlayer == null) return;
-        if (!currentPlayer.IsUserInVR()) return;
-        if (currentPlayer != Networking.LocalPlayer) return;
+        if (currentPlayerID == 0) return;
+        if (currentPlayerID != Networking.LocalPlayer.playerId) return;
+        if (!Networking.LocalPlayer.IsUserInVR()) return;
         base.InputUse(value, args);
         if (value)
         {
@@ -145,7 +145,7 @@ public class FishingRodManager : UdonSharpBehaviour
             flyManager = fly.GetComponent<FlyManager>();
             flyManager.fishingRodManager = this;
             Rigidbody rb = fly.GetComponent<Rigidbody>();
-            flyManager.SetNetworkOwner(currentPlayer);
+            flyManager.SetNetworkOwner(Networking.LocalPlayer);
 
             Vector3 positionDistance = flySpawner.position - startPosition;
             Vector3 velocity = positionDistance * playerCastStrength;
@@ -180,10 +180,9 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public void CatchFish()
     {
-        Debug.Log(fishManager);
         if (fishManager != null)
         {
-            fishManager.SetNetworkOwner(currentPlayer);
+            fishManager.SetNetworkOwner(Networking.LocalPlayer);
             fishManager.OnCaught();
             fishManager.transform.position = flySpawner.position;
             fishManager = null;

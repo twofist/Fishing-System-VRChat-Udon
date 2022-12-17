@@ -71,7 +71,7 @@ public class FlyManager : UdonSharpBehaviour
             catchableFish = waterManager.catchableFish;
             catchChances = waterManager.catchChances;
             fishObjectPools = waterManager.objectPools;
-            if (fishingRodManager != null && fishingRodManager.currentPlayer == Networking.LocalPlayer)
+            if (fishingRodManager != null && fishingRodManager.currentPlayerID == Networking.LocalPlayer.playerId)
             {
                 isTimerOn = true;
             }
@@ -125,8 +125,8 @@ public class FlyManager : UdonSharpBehaviour
 
     public void CreateFish()
     {
-        if (fishingRodManager.currentPlayer != Networking.LocalPlayer) return;
-        Networking.SetOwner(fishingRodManager.currentPlayer, fishObjectPools[bitFishIndex].gameObject);
+        if (fishingRodManager.currentPlayerID != Networking.LocalPlayer.playerId) return;
+        Networking.SetOwner(Networking.LocalPlayer, fishObjectPools[bitFishIndex].gameObject);
 
         fish = fishObjectPools[bitFishIndex].TryToSpawn();
         if (fish != null)
