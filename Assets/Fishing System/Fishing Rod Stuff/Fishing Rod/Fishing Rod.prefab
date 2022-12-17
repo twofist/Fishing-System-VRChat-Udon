@@ -535,8 +535,6 @@ MonoBehaviour:
   reelBarSize: 150
   reelBar: {fileID: 6713620255795268208}
   slider: {fileID: 483958786248921055}
-  flyPrefab: {fileID: 2668335107716919247, guid: 7988837e692c32541ac5e4840ad4b1b7,
-    type: 3}
   flySpawner: {fileID: 4958431480589093658}
   rodRigidBody: {fileID: 3311989287537525628}
   lineRenderer: {fileID: 4958431481649506626}
@@ -549,7 +547,7 @@ MonoBehaviour:
   caughtFishSound: {fileID: 8300000, guid: ec56af8b93a91864da76bd2b90dc2c63, type: 3}
   reelWindSound: {fileID: 8300000, guid: dc4eba55554abfe45936f261d32b2952, type: 3}
   audioSource: {fileID: 3070256517326113195}
-  objectPool: {fileID: 1041235433510810814}
+  linePosition: {x: 0, y: 0, z: 0}
 --- !u!114 &3455309971005095351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -777,7 +775,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4958431481649506624}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1623,6 +1621,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fly
       objectReference: {fileID: 0}
+    - target: {fileID: 4469497168159089655, guid: 7988837e692c32541ac5e4840ad4b1b7,
+        type: 3}
+      propertyPath: flyObjectPool
+      value: 
+      objectReference: {fileID: 1041235433510810814}
     - target: {fileID: 4469497168159089655, guid: 7988837e692c32541ac5e4840ad4b1b7,
         type: 3}
       propertyPath: serializationData.Prefab

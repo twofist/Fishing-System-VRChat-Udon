@@ -12,7 +12,6 @@ public class FishingRodManager : UdonSharpBehaviour
     public RectTransform reelBar;
     public Slider slider;
     float sliderSpeed = 0.1f;
-    GameObject fly;
     public Transform flySpawner;
     public Rigidbody rodRigidBody;
     public LineRenderer lineRenderer;
@@ -23,15 +22,11 @@ public class FishingRodManager : UdonSharpBehaviour
     [HideInInspector] public FishManager fishManager;
     [HideInInspector] public VRCPlayerApi currentPlayer;
     public ReelManager reelManager;
-    float startCastTime;
     Vector3 startCastPosition;
-    Vector3 startCastRotation;
     public float playerCastStrength = 10;
-
     public AudioClip caughtFishSound;
     public AudioClip reelWindSound;
     public AudioSource audioSource;
-    public VRCObjectPool objectPool;
     [UdonSynced] public Vector3 linePosition;
     void Start()
     {
@@ -45,10 +40,9 @@ public class FishingRodManager : UdonSharpBehaviour
         {
             sliderSpeed = -sliderSpeed;
         }
-        if (fly != null)
+        if (flyManager != null)
         {
-            lineRenderer.enabled = true;
-            linePosition = lineRenderer.transform.InverseTransformPoint(fly.transform.position);
+            linePosition = lineRenderer.transform.InverseTransformPoint(flyManager.transform.position);
         }
         lineRenderer.SetPosition(1, linePosition);
     }
@@ -58,7 +52,7 @@ public class FishingRodManager : UdonSharpBehaviour
         base.OnPickup();
         if (currentPlayer != Networking.LocalPlayer)
         {
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.All, "ResetRod");
+            ResetRod();
             currentPlayer = Networking.LocalPlayer;
             Networking.SetOwner(currentPlayer, gameObject);
             Networking.SetOwner(currentPlayer, flySpawner.gameObject);
@@ -67,15 +61,27 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public void ResetRod()
     {
-        flyManager = null;
-        if (fishManager)
+        ResetFly();
+    }
+
+    void ResetFly()
+    {
+        reelManager.ResetReel();
+        canvas.SetActive(false);
+        if (fishManager != null)
         {
-            OnFishLost();
+            fishManager.OnKillFish();
+        }
+        else
+        {
+            if (flyManager != null)
+            {
+                flyManager.flyObjectPool.Return(flyManager.gameObject);
+            }
         }
         fishManager = null;
-        canvas.SetActive(false);
-        linePosition = Vector3.zero;
-        lineRenderer.enabled = false;
+        flyManager = null;
+        linePosition = lineRenderer.GetPosition(0);
         audioSource.Stop();
         audioSource.loop = false;
     }
@@ -83,52 +89,65 @@ public class FishingRodManager : UdonSharpBehaviour
     {
         if (!currentPlayer.IsUserInVR())
         {
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "HandleDesktopCast");
+            HandleDesktopCast();
         }
         base.OnDrop();
     }
 
     public override void InputUse(bool value, VRC.Udon.Common.UdonInputEventArgs args)
     {
-        if (currentPlayer != Networking.LocalPlayer) return;
+        if (currentPlayer == null) return;
         if (!currentPlayer.IsUserInVR()) return;
+        if (currentPlayer != Networking.LocalPlayer) return;
         base.InputUse(value, args);
         if (value)
         {
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "OnStartCast");
+            OnStartCast();
         }
         else
         {
-            SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "OnEndCast");
+            OnEndCast();
         }
     }
 
     public void HandleDesktopCast()
     {
-        if (fishManager != null)
-        {
-            OnFishLost();
-        }
-        objectPool.Return(fly);
-        fly = null;
+        BeginCast();
 
-        lineRenderer.enabled = false;
-        linePosition = Vector3.zero;
-        reelPickUp.pickupable = false;
+        DoCast(transform.position);
+    }
 
-        fly = objectPool.TryToSpawn();
+    public void OnStartCast()
+    {
+        BeginCast();
+        startCastPosition = flySpawner.position;
+    }
+
+    void BeginCast()
+    {
+        ResetFly();
+    }
+
+    public void OnEndCast()
+    {
+        DoCast(startCastPosition);
+    }
+
+    void DoCast(Vector3 startPosition)
+    {
+        GameObject fly = flySpawner.GetComponent<VRCObjectPool>().TryToSpawn();
         if (fly != null)
         {
+            fly.transform.SetParent(null);
             fly.transform.position = flySpawner.position;
             fly.transform.rotation = flySpawner.rotation;
-            fly.transform.SetParent(null);
 
             flyManager = fly.GetComponent<FlyManager>();
             flyManager.fishingRodManager = this;
             Rigidbody rb = fly.GetComponent<Rigidbody>();
             flyManager.SetNetworkOwner(currentPlayer);
 
-            Vector3 positionDistance = flySpawner.position - transform.position;
+            Vector3 positionDistance = flySpawner.position - startPosition;
             Vector3 velocity = positionDistance * playerCastStrength;
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
@@ -137,44 +156,6 @@ public class FishingRodManager : UdonSharpBehaviour
         }
 
         reelPickUp.pickupable = true;
-        lineRenderer.enabled = true;
-        startReelWindSound();
-    }
-
-    public void OnStartCast()
-    {
-        if (fishManager != null)
-        {
-            OnFishLost();
-        }
-        objectPool.Return(fly);
-        fly = null;
-        lineRenderer.enabled = false;
-        linePosition = Vector3.zero;
-        reelPickUp.pickupable = false;
-        startCastPosition = flySpawner.position;
-        startCastTime = Time.time;
-        startCastRotation = flySpawner.rotation.eulerAngles;
-    }
-
-    public void OnEndCast()
-    {
-        fly = objectPool.TryToSpawn();
-        fly.transform.position = flySpawner.position;
-        fly.transform.rotation = flySpawner.rotation;
-        fly.transform.SetParent(null);
-        flyManager = fly.GetComponent<FlyManager>();
-        flyManager.fishingRodManager = this;
-        Rigidbody rb = fly.GetComponent<Rigidbody>();
-        flyManager.SetNetworkOwner(currentPlayer);
-        Vector3 positionDistance = flySpawner.position - startCastPosition;
-        Vector3 velocity = positionDistance * playerCastStrength;
-        rb.velocity = Vector3.zero;
-        rb.angularVelocity = Vector3.zero;
-        rb.isKinematic = false;
-        rb.velocity = velocity;
-        reelPickUp.pickupable = true;
-        lineRenderer.enabled = true;
         startReelWindSound();
     }
 
@@ -189,48 +170,30 @@ public class FishingRodManager : UdonSharpBehaviour
 
     public void OnFishLost()
     {
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "LoseFish");
+        LoseFish();
     }
 
     public void LoseFish()
     {
-        reelManager.ResetReel();
-        canvas.SetActive(false);
-        if (fishManager != null)
-        {
-            fishManager.OnKillFish();
-        }
-        fishManager = null;
-        objectPool.Return(fly);
-        fly = null;
-
-        linePosition = Vector3.zero;
-        lineRenderer.enabled = false;
-        audioSource.Stop();
+        ResetRod();
     }
 
     public void CatchFish()
     {
-        reelManager.ResetReel();
-        canvas.SetActive(false);
+        Debug.Log(fishManager);
         if (fishManager != null)
         {
             fishManager.SetNetworkOwner(currentPlayer);
             fishManager.OnCaught();
             fishManager.transform.position = flySpawner.position;
+            fishManager = null;
         }
-        fishManager = null;
-        objectPool.Return(fly);
-        fly = null;
-
-        linePosition = Vector3.zero;
-        lineRenderer.enabled = false;
-        audioSource.Stop();
+        ResetRod();
     }
 
     public void OnCatch()
     {
-        SendCustomNetworkEvent(VRC.Udon.Common.Interfaces.NetworkEventTarget.Owner, "CatchFish");
+        CatchFish();
     }
 
     public void MoveFlyToNextPoint()

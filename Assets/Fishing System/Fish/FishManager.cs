@@ -9,9 +9,9 @@ public class FishManager : UdonSharpBehaviour
 {
     [Range(0.1f, 1)] public float sliderSpeed = .3f;
     public VRC_Pickup pickup;
-    [HideInInspector] public VRCObjectPool objectPool;
+    [HideInInspector] public VRCObjectPool fishObjectPool;
     [UdonSynced] public bool pickupable = false;
-    [UdonSynced] bool isKilled = false;
+    [UdonSynced] public bool isKilled = false;
 
     void Start()
     {
@@ -22,15 +22,23 @@ public class FishManager : UdonSharpBehaviour
     {
         if (pickupable != pickup.pickupable)
         {
-            transform.SetParent(null);
             pickup.pickupable = true;
+            HandleReset(false);
         }
         if (isKilled && transform.parent != null)
         {
-            transform.SetParent(null);
-            if (Networking.IsOwner(Networking.LocalPlayer, gameObject))
+            HandleReset(true);
+        }
+    }
+
+    void ReturnFlyToPool(Transform fly)
+    {
+        if (fly != null)
+        {
+            FlyManager flyManager = fly.GetComponent<FlyManager>();
+            if (flyManager != null)
             {
-                objectPool.Return(gameObject);
+                flyManager.flyObjectPool.Return(fly.gameObject);
             }
         }
     }
@@ -38,11 +46,25 @@ public class FishManager : UdonSharpBehaviour
     public void OnCaught()
     {
         pickupable = true;
+        HandleReset(false);
     }
 
     public void OnKillFish()
     {
         isKilled = true;
+        HandleReset(true);
+    }
+
+    void HandleReset(bool resetFish)
+    {
+        Transform fly = transform.parent;
+        transform.SetParent(null);
+        if (resetFish)
+        {
+            Debug.Log("reset fish");
+            fishObjectPool.Return(gameObject);
+        }
+        ReturnFlyToPool(fly);
     }
 
     public void SetNetworkOwner(VRCPlayerApi player)
