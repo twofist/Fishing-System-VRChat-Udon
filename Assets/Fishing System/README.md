@@ -15,7 +15,7 @@
 
 Drag in as many "Fishing Rod" prefabs as you want in your world  
 
-Give Water you want to be able to interact with the Fishing Rod the "WaterManager" Script  
+Give Water you want to be able to interact with the Fishing Rod the "WaterManager" Script and assign "Water" layer  
 
 Change the Fishes & Chances (if no chances then it will pick between randomly) to whatever you want  
 
