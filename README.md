@@ -1,5 +1,9 @@
 ## Fishing system for vrchat sdk3.0 worlds VR + Desktop capable  
 
+
+https://user-images.githubusercontent.com/13707992/208324990-fe284bc6-93d0-4095-8532-21aa455a1379.mp4
+
+
 1. press trigger to start casting
 2. release trigger to throw line
 3. wait for fish bite
