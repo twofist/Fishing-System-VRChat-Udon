@@ -38,6 +38,7 @@ public class FishManager : UdonSharpBehaviour
             FlyManager flyManager = fly.GetComponent<FlyManager>();
             if (flyManager != null)
             {
+                flyManager.transform.SetParent(flyManager.flyObjectPool.transform);
                 flyManager.flyObjectPool.Return(fly.gameObject);
             }
         }
@@ -61,6 +62,7 @@ public class FishManager : UdonSharpBehaviour
         transform.SetParent(null);
         if (resetFish)
         {
+            transform.SetParent(fishObjectPool.transform);
             fishObjectPool.Return(gameObject);
         }
         ReturnFlyToPool(fly);

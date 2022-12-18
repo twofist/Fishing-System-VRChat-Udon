@@ -84,6 +84,7 @@ public class FishingRodManager : UdonSharpBehaviour
         {
             if (flyManager != null)
             {
+                flyManager.transform.SetParent(flyManager.flyObjectPool.transform);
                 flyManager.flyObjectPool.Return(flyManager.gameObject);
             }
         }
