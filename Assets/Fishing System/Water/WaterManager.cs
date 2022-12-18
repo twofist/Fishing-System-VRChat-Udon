@@ -7,9 +7,8 @@ using VRC.SDK3.Components;
 
 public class WaterManager : UdonSharpBehaviour
 {
-    public GameObject[] catchableFish;
     public int[] catchChances;
-    public VRCObjectPool[] objectPools;
+    public VRCObjectPool[] catchableFishObjectPools;
     void Start()
     {
 

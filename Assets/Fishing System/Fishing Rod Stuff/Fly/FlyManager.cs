@@ -13,7 +13,6 @@ public class FlyManager : UdonSharpBehaviour
     float timer = 5f;
     bool isTimerOn = false;
 
-    GameObject[] catchableFish;
     int[] catchChances;
     [HideInInspector] GameObject fish;
     [HideInInspector] public FishingRodManager fishingRodManager;
@@ -68,9 +67,8 @@ public class FlyManager : UdonSharpBehaviour
         if (waterManager != null)
         {
 
-            catchableFish = waterManager.catchableFish;
             catchChances = waterManager.catchChances;
-            fishObjectPools = waterManager.objectPools;
+            fishObjectPools = waterManager.catchableFishObjectPools;
             if (fishingRodManager != null && fishingRodManager.currentPlayerID == Networking.LocalPlayer.playerId)
             {
                 isTimerOn = true;
@@ -94,19 +92,23 @@ public class FlyManager : UdonSharpBehaviour
     {
         if (catchChances.Length < 1)
         {
-            int bitFish = Random.Range(0, catchableFish.Length - 1);
+            Debug.Log(fishObjectPools.Length);
+            for (int i = 0; i < 50; i++)
+            {
+                Debug.Log(Random.Range(0, fishObjectPools.Length));
+            }
+            int bitFish = Random.Range(0, fishObjectPools.Length);
             bitFishIndex = bitFish;
-
             CreateFish();
         }
         else
         {
-            for (int i = 0; i < catchableFish.Length - 1; i++)
+            for (int i = 0; i < fishObjectPools.Length - 1; i++)
             {
                 if (Random.Range(0, 100) < catchChances[i])
                 {
                     bitFishIndex = i;
-
+                    Debug.Log(i);
                     CreateFish();
                     break;
                 }
@@ -116,6 +118,7 @@ public class FlyManager : UdonSharpBehaviour
         {
             FishManager fishManager = fish.GetComponent<FishManager>();
             fishingRodManager.OnFishBite(fishManager.sliderSpeed);
+            fish = null;
         }
         else
         {

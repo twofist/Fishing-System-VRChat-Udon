@@ -199,7 +199,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 332682737480036317}
   sliderSpeed: 0.3
   pickup: {fileID: 5053868003973138669}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &332682737480036317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -641,7 +643,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 703323021416718268}
   sliderSpeed: 0.3
   pickup: {fileID: 5439692544546650252}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &703323021416718268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1077,7 +1081,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1002233954922964833}
   sliderSpeed: 0.3
   pickup: {fileID: 5717242191947645009}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &1002233954922964833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1300,7 +1306,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1062883578505064195}
   sliderSpeed: 0.3
   pickup: {fileID: 5512126634100852787}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &1062883578505064195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1952,7 +1960,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1732970845980139814}
   sliderSpeed: 0.3
   pickup: {fileID: 6535744291542648342}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &1732970845980139814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2145,7 +2155,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1805429613051449572}
   sliderSpeed: 0.3
   pickup: {fileID: 6607118930480330708}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &1805429613051449572
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2700,7 +2712,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 2290393008328474496}
   sliderSpeed: 0.3
   pickup: {fileID: 6734573926079928496}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &2290393008328474496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3110,7 +3124,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 2758331311986505050}
   sliderSpeed: 0.3
   pickup: {fileID: 7275724306945151594}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &2758331311986505050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3323,7 +3339,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 05f77971393731d498f24d65faf3c74f, type: 2}
+  - {fileID: 2100000, guid: 6afab45480f045241a1a2c82e98b63ca, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3366,11 +3382,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2835804670643528396}
-  catchableFish:
-  - {fileID: 9087033638231773931, guid: 2dfd76372f53c48468cb6370ad6e1f2f, type: 3}
-  - {fileID: 9087033638231773931, guid: ecf5235c32ab8df458dc98700b7f8a78, type: 3}
   catchChances: 
-  objectPools:
+  catchableFishObjectPools:
   - {fileID: 4598643250330434570}
   - {fileID: 7971091365670812835}
 --- !u!114 &2835804670643528396
@@ -4008,7 +4021,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 3453412781274867262}
   sliderSpeed: 0.3
   pickup: {fileID: 7877890462458069262}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &3453412781274867262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4507,7 +4522,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 3787456041261640905}
   sliderSpeed: 0.3
   pickup: {fileID: 8516483024670444537}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &3787456041261640905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4912,7 +4929,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4330968079148975719}
   sliderSpeed: 0.3
   pickup: {fileID: 9125893210732093783}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &4330968079148975719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5344,7 +5363,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4401314562400860366}
   sliderSpeed: 0.3
   pickup: {fileID: 9199590999771766782}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &4401314562400860366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5628,7 +5649,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4574603705257735885}
   sliderSpeed: 0.3
   pickup: {fileID: 9062191150579601917}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &4574603705257735885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5821,7 +5844,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 4609289803452542643}
   sliderSpeed: 0.3
   pickup: {fileID: 9027575009382533507}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &4609289803452542643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6567,7 +6592,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 5078905569235120134}
   sliderSpeed: 0.3
   pickup: {fileID: 343675135857645366}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &5078905569235120134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7282,7 +7309,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 5878299035671481529}
   sliderSpeed: 0.3
   pickup: {fileID: 1381750592066988937}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &5878299035671481529
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8079,7 +8108,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6257074537107877514}
   sliderSpeed: 0.3
   pickup: {fileID: 1471136801771620794}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &6257074537107877514
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8241,7 +8272,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6263673972594673574}
   sliderSpeed: 0.3
   pickup: {fileID: 1464256232221270166}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &6263673972594673574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8677,7 +8710,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 6776247088057333664}
   sliderSpeed: 0.3
   pickup: {fileID: 2068576992978030736}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &6776247088057333664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9599,7 +9634,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 7481631876815286737}
   sliderSpeed: 0.3
   pickup: {fileID: 2696257112089990881}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &7481631876815286737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10463,7 +10500,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8077579087261856179}
   sliderSpeed: 0.3
   pickup: {fileID: 3649688530305881731}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &8077579087261856179
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10687,7 +10726,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 8184614838432702169}
   sliderSpeed: 0.3
   pickup: {fileID: 3686909703243364841}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &8184614838432702169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11640,7 +11681,9 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 9059203797341479983}
   sliderSpeed: 0.3
   pickup: {fileID: 4541843770811237151}
-  objectPool: {fileID: 0}
+  fishObjectPool: {fileID: 0}
+  pickupable: 0
+  isKilled: 0
 --- !u!114 &9059203797341479983
 MonoBehaviour:
   m_ObjectHideFlags: 0

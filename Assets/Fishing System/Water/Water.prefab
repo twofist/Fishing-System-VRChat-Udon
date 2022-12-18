@@ -247,7 +247,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 6afab45480f045241a1a2c82e98b63ca, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -290,11 +290,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8285928947389272682}
-  catchableFish:
-  - {fileID: 5330054589981012781, guid: 9dffb52c3a2c87f4984ab85b7817aead, type: 3}
-  - {fileID: 9087033638231773931, guid: ecf5235c32ab8df458dc98700b7f8a78, type: 3}
   catchChances: 140000001e000000
-  objectPools:
+  catchableFishObjectPools:
   - {fileID: 7671579063763012780}
   - {fileID: 4267235920054815749}
 --- !u!114 &8285928947389272682
