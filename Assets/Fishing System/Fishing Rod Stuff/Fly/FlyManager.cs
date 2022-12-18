@@ -92,11 +92,6 @@ public class FlyManager : UdonSharpBehaviour
     {
         if (catchChances.Length < 1)
         {
-            Debug.Log(fishObjectPools.Length);
-            for (int i = 0; i < 50; i++)
-            {
-                Debug.Log(Random.Range(0, fishObjectPools.Length));
-            }
             int bitFish = Random.Range(0, fishObjectPools.Length);
             bitFishIndex = bitFish;
             CreateFish();
@@ -108,7 +103,6 @@ public class FlyManager : UdonSharpBehaviour
                 if (Random.Range(0, 100) < catchChances[i])
                 {
                     bitFishIndex = i;
-                    Debug.Log(i);
                     CreateFish();
                     break;
                 }

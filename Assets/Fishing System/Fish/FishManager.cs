@@ -61,7 +61,6 @@ public class FishManager : UdonSharpBehaviour
         transform.SetParent(null);
         if (resetFish)
         {
-            Debug.Log("reset fish");
             fishObjectPool.Return(gameObject);
         }
         ReturnFlyToPool(fly);
